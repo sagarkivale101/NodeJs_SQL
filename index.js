@@ -11,7 +11,8 @@ const mysqlConnection = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
     password : 'Sagar@123',
-    database : 'EmployeeDB'
+    database : 'EmployeeDB',
+    multipleStatements: true
   });
   
   //EmployeeDB.employee
@@ -78,15 +79,49 @@ app.post('/emp', (req, res)=>{
     })
 })
 
+app.post('/employees', (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @salary = ?; \
+    CALL EmployeeAddOrEdit(@EmpID,@Name,@EmpCode,@salary);";
+    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.salary], (err, rows, fields) => {
+        if (!err)
+            rows.forEach(element => {
+                if(element.constructor == Array)
+                res.send('Inserted employee id : '+element[0].EmpID);
+            });
+        else
+            console.log(err);
+    })
+});
+
+app.put('/employees', (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @salary = ?; \
+    CALL EmployeeAddOrEdit(@EmpID,@Name,@EmpCode,@salary);";
+    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.salary], (err, rows, fields) => {
+        if (!err)
+            rows.forEach(element => {
+                if(element.constructor == Array)
+                res.send('Inserted employee id : '+element[0].EmpID);
+            });
+        else
+            console.log(err);
+    })
+});
+
 
 app.put('/emp/:id', (req, res)=>{
-    console.log(req.body);
+    console.log(req.body.EmpID);
+    console.log(req.body.Name);
+    console.log(req.body.EmpCode);
+    console.log(req.body.salary);
     
-    mysqlConnection.query(`UPDATE employee SET Name = 'Alfred' WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
-        if(err){
-            console.log(err);
-        }else{
-            res.send('POST SUCCESSFUL')
-        }
-    })
+    
+    // mysqlConnection.query(`UPDATE employee SET Name = 'Alfred' WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+    //     if(err){
+    //         console.log(err);
+    //     }else{
+    //         res.send('POST SUCCESSFUL')
+    //     }
+    // })
 })
