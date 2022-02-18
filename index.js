@@ -29,13 +29,64 @@ app.listen(3000, () => {
     console.log('Server is running at port 3000');
   });
 
-app.get('/emp', (res, req)=>{
 
-    mysqlConnection.query('SELECT * FROM employee', (err, rows, fields)=>{
+app.get('/emp', (req, res)=>{
+      mysqlConnection.query('SELECT * FROM employee', (err, rows, fields)=>{
         if(err){
             console.log(err);
         }else{
-            console.log(rows)
+            console.log(rows);
+            res.send(rows)
+        }
+    })
+})
+
+
+
+app.get('/emp/:id', (req, res)=>{
+    mysqlConnection.query(`SELECT * FROM employee WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+      if(err){
+          console.log(err);
+      }else{
+          console.log(rows);
+          res.send(rows)
+      }
+  })
+})
+
+
+app.delete('/emp/:id', (req, res)=>{
+    mysqlConnection.query(`DELETE FROM employee WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+      if(err){
+          console.log(err);
+      }else{
+          res.send('DELETE SUCCESSFUL')
+      }
+  })
+})
+
+
+app.post('/emp', (req, res)=>{
+    console.log( req.body);
+    
+    mysqlConnection.query(`insert into employee values(${req.body.EmpID} , "${req.body.Name}", "${req.body.EmpCode}", ${req.body.salary})`, (err, rows, fields)=>{
+        if(err){
+            console.log(err);
+        }else{
+            res.send('POST SUCCESSFUL')
+        }
+    })
+})
+
+
+app.put('/emp/:id', (req, res)=>{
+    console.log(req.body);
+    
+    mysqlConnection.query(`UPDATE employee SET Name = 'Alfred' WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+        if(err){
+            console.log(err);
+        }else{
+            res.send('POST SUCCESSFUL')
         }
     })
 })
