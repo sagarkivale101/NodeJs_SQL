@@ -66,7 +66,7 @@ app.delete('/emp/:id', (req, res)=>{
   })
 })
 
-
+//without using stored procedure
 app.post('/emp', (req, res)=>{
     console.log( req.body);
     
@@ -79,6 +79,8 @@ app.post('/emp', (req, res)=>{
     })
 })
 
+
+//using stored procedure
 app.post('/employees', (req, res) => {
     let emp = req.body;
     var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @salary = ?; \
@@ -94,6 +96,9 @@ app.post('/employees', (req, res) => {
     })
 });
 
+
+
+//using stored procedure
 app.put('/employees', (req, res) => {
     let emp = req.body;
     var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @salary = ?; \
@@ -110,18 +115,14 @@ app.put('/employees', (req, res) => {
 });
 
 
+
+//without using stored procedure
 app.put('/emp/:id', (req, res)=>{
-    console.log(req.body.EmpID);
-    console.log(req.body.Name);
-    console.log(req.body.EmpCode);
-    console.log(req.body.salary);
-    
-    
-    // mysqlConnection.query(`UPDATE employee SET Name = 'Alfred' WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
-    //     if(err){
-    //         console.log(err);
-    //     }else{
-    //         res.send('POST SUCCESSFUL')
-    //     }
-    // })
+   mysqlConnection.query(`UPDATE employee SET Name = '${req.body.Name}', EmpCode = '${req.body.EmpCode}', salary = ${req.body.salary} WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+        if(err){
+            console.log(err);
+        }else{
+            res.send('POST SUCCESSFUL')
+        }
+    })
 })
