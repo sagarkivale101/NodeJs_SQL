@@ -117,12 +117,27 @@ app.put('/employees', (req, res) => {
 
 
 //without using stored procedure
-app.put('/emp/:id', (req, res)=>{
-   mysqlConnection.query(`UPDATE employee SET Name = '${req.body.Name}', EmpCode = '${req.body.EmpCode}', salary = ${req.body.salary} WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+app.put('/emp/:id', async (req, res)=>{
+if(req.body.Name != undefined){
+   mysqlConnection.query(`UPDATE employee SET Name = '${req.body.Name}' WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
         if(err){
-            console.log(err);
+           return console.log(err);
         }else{
-            res.send('POST SUCCESSFUL')
+            return res.send('POST SUCCESSFUL')
+            
         }
     })
+}
+else if(req.body.salary != undefined){
+
+   mysqlConnection.query(`UPDATE employee SET  salary = ${req.body.salary} WHERE EmpID = ${req.params.id}`, (err, rows, fields)=>{
+    if(err){
+           return    console.log(err);
+    }else{
+        return res.send('POST SUCCESSFUL')
+        
+    }
+})
+
+}
 })
